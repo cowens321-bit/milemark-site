@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "tableVersion": "2026-10-03.1",
+  "publishedAt": "2026-10-03",
+  "currency": "USD",
+  "verifiedAgainst": "https://www.irs.gov/tax-professionals/standard-mileage-rates",
+  "verifiedOn": "2026-10-03",
+  "entries": [
+    { "id": "irs-2024", "start": "2024-01-01", "end": "2024-12-31", "rate": "0.670", "source": "IRS", "notice": "IR-2023-239", "verified": true },
+    { "id": "irs-2025", "start": "2025-01-01", "end": "2025-12-31", "rate": "0.700", "source": "IRS", "notice": "IR-2024-312", "verified": true },
+    { "id": "irs-2026-h1", "start": "2026-01-01", "end": "2026-06-30", "rate": "0.725", "source": "IRS", "notice": "IR-2025-128", "verified": true },
+    { "id": "irs-2026-h2", "start": "2026-07-01", "end": "2026-12-31", "rate": "0.760", "source": "IRS", "notice": "IR-2026-29", "verified": true }
+  ]
+}

@@ -1,0 +1,47 @@
+# Install at .github/workflows/irs-rates.yml in cowens321-bit/wayledger-site.
+# Copy update_rates.py and test_update_rates.py into rates/ alongside the seed JSON.
+# Pages must use an Actions deployment: pushes made by GITHUB_TOKEN do not trigger
+# branch-based Pages builds. Deploy explicitly below after successful validation.
+name: IRS rates
+on:
+  schedule:
+    - cron: '17 13 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: irs-rates
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test publisher
+        run: python3 -m unittest discover -s rates -p 'test_*.py'
+      - name: Fetch and validate IRS rates
+        run: python3 rates/update_rates.py --previous rates/irs-business-rates.json --out rates/irs-business-rates.json
+      - name: Commit changed rates
+        shell: bash
+        run: |
+          git add rates/irs-business-rates.json
+          if ! git diff --cached --quiet -- rates/irs-business-rates.json; then
+            version=$(python3 -c 'import json; print(json.load(open("rates/irs-business-rates.json"))["tableVersion"])')
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "IRS rates: update to $version"
+            git push
+          fi
+      # Deploy after every successful check, so an earlier deployment failure is retried
+      # even when the IRS entries have not changed again.
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - uses: actions/deploy-pages@v4
+        id: deployment
